@@ -67,3 +67,38 @@ pub fn parse(input: String) -> Value {
     }
     panic!("Invalid Expression");
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parse_should_return_primitive() {
+        let input = String::from("1");
+        assert_eq!(parse(input).value(), 1.0);
+    }
+
+    #[test]
+    fn parse_should_add() {
+        let input = String::from("1 + 1");
+        assert_eq!(parse(input).value(), 2.0);
+    }
+
+    #[test]
+    fn parse_should_subtract() {
+        let input = String::from("2 - 1");
+        assert_eq!(parse(input).value(), 1.0);
+    }
+
+    #[test]
+    fn parse_should_multiply() {
+        let input = String::from("2 * 1.5");
+        assert_eq!(parse(input).value(), 3.0);
+    }
+
+    #[test]
+    fn parse_should_divide() {
+        let input = String::from("2.5 / 0.5");
+        assert_eq!(parse(input).value(), 5.0);
+    }
+}
