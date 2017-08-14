@@ -23,13 +23,26 @@ pub fn parse(input: String) -> Value {
                 }else if b.is_none() {
                     b = Some(parse(sub));
                 }else {
-                    print!("Whoops");
+                    print!("Whoops Brackets");
                 }
             },
-            '+' => action = Some(Actions::ADD),
-            '-' => action = Some(Actions::SUBTRACT),
-            '*' => action = Some(Actions::MULTIPLY),
-            '/' => action = Some(Actions::DIVIDE),
+            '+' | '-' | '*' | '/' => {
+                if action.is_some() && a.is_some() && b.is_some() {
+                    a = Some(Value::Expression(Box::new(Expression {
+                        a: a.unwrap(),
+                        b: b.unwrap(),
+                        action: action.unwrap()
+                    })));
+                    b = None;
+                }
+                action = match next.unwrap() {
+                    '+' => Some(Actions::ADD),
+                    '-' => Some(Actions::SUBTRACT),
+                    '*' => Some(Actions::MULTIPLY),
+                    '/' => Some(Actions::DIVIDE),
+                    _ => None
+                };
+            },
             '^' => action = Some(Actions::POWER),
             '0'...'9' | '.' => {
                 let mut current = String::new();
@@ -49,7 +62,7 @@ pub fn parse(input: String) -> Value {
                 }else if b.is_none() {
                     b = value;
                 }else {
-                    println!("Whoops");
+                    println!("Whoops Numbers");
                 }
             },
             _ => {},
@@ -100,5 +113,11 @@ mod tests {
     fn parse_should_divide() {
         let input = String::from("2.5 / 0.5");
         assert_eq!(parse(input).value(), 5.0);
+    }
+
+    #[test]
+    fn parse_should_add_three() {
+        let input = String::from("1 + 1 + 1");
+        assert_eq!(parse(input).value(), 3.0);
     }
 }
